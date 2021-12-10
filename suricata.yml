@@ -1,0 +1,77 @@
+---
+# Деплой 
+- name: Install Suricata
+  hosts: servers
+  gather_facts: false #пока не понятно нужен ли данный параметр
+
+  vars:
+    IFACE: vlan492 #
+    proxy_env:
+      http_proxy: http://proxy:3128 
+      https_proxy: http://proxy:3128
+  tasks:
+    - name: Install required packages
+    package: 
+      name: "{{ item }}"
+      state: installed
+    with_item:
+      - suricata
+    environment: "{{ proxy_env }}"      
+      
+    - name: Copy default conf
+      template: src=etc/default/suricata.j2 dest=etc/default/suricata
+        owner: root
+        group: root
+        mode: 0660
+        backup: yes
+  
+    - name: Copy suricata conf
+      template: src=etc/suricata/suricata.yaml.j2 dest=etc/suricata/suricata.yaml
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+
+    - name: Logrotate.d conf
+      template: src=etc/logrotate.d/suricata.j2 dest=etc/logrotate.d/suricata
+        owner: root
+        group: root
+        mode: 0640
+        backup: no
+    
+    - name: Update suricata rules
+      ansible.builtin.command:
+        cmd: suricata-update
+
+    - name: Enable service suricata
+      ansible.builtin.systemd:
+        name: suricata
+        enabled: yes
+        masked: no
+
+    - name: Start service suricata
+      ansible.builtin.systemd:
+        state: started
+        name: suricata
+
+# Управление сервисом сурикаты
+- name: Services Suricata
+  hosts: servers
+  gather_facts: false 
+
+  tasks:
+
+    - name: Start service suricata
+      ansible.builtin.systemd:
+        state: started
+        name: suricata
+
+    - name: Stopped service suricata
+      ansible.builtin.systemd:
+        state: stopped
+        name: suricata
+
+    - name: Restart service suricata
+      ansible.builtin.systemd:
+        state: restarted
+        name: suricata
