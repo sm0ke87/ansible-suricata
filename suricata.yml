@@ -2,13 +2,16 @@
 # Деплой 
 - name: Install Suricata
   hosts: servers
-  gather_facts: false #пока не понятно нужен ли данный параметр
+  gather_facts: false
 
   vars:
-    IFACE: vlan492
+    IFACE: vlan999
     proxy_env:
       http_proxy: http://proxy:3128
       https_proxy: http://proxy:3128
+
+  vars_files:
+    - etc/vars/vars.yml
 
   tasks:
     - name: Add suricata stable repository from PPA and install its signing key on Ubuntu target
@@ -19,7 +22,7 @@
       apt:
         name: suricata
         state: latest
-      #environment: "{{ proxy_env }}"
+      environment: "{{ proxy_env }}"
       
     - name: Change /etc/default/suricata
       lineinfile:
@@ -36,24 +39,26 @@
         mode: 0644
         backup: yes
 
-    - name: Change /etc/suricata/suricata.yaml #here now
-        lineinfile:
-          dest: /etc/default/suricata
-          regexp: IFACE
-          line: IFACE={{ IFACE }}
-
     - name: Logrotate.d conf
       template:
         src: etc/logrotate.d/suricata.j2
-        dest: etc/logrotate.d/suricata
+        dest: /etc/logrotate.d/suricata
         owner: root
         group: root
-        mode: 0640
+        mode: 0644
         backup: no
     
     - name: Update suricata rules
-      ansible.builtin.command:
-        cmd: suricata-update
+      command: suricata-update
+
+    - name: Add rules for surricata from PT
+      command: suricata-update enable-source ptresearch/attackdetection
+
+    - name: Add rules for surricata from Oisf
+      command: suricata-update enable-source oisf/trafficid
+
+    - name: Add rules for surricata from SSL-blacklist
+      command: suricata-update enable-source sslbl/ssl-fp-blacklist
 
     - name: Enable service suricata
       ansible.builtin.systemd:
@@ -64,26 +69,4 @@
     - name: Start service suricata
       ansible.builtin.systemd:
         state: started
-        name: suricata
-
-# Управление сервисом сурикаты
-- name: Services Suricata
-  hosts: servers
-  gather_facts: false 
-
-  tasks:
-
-    - name: Start service suricata
-      ansible.builtin.systemd:
-        state: started
-        name: suricata
-
-    - name: Stopped service suricata
-      ansible.builtin.systemd:
-        state: stopped
-        name: suricata
-
-    - name: Restart service suricata
-      ansible.builtin.systemd:
-        state: restarted
         name: suricata

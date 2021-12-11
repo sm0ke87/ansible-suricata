@@ -1,0 +1,11 @@
+---
+# Управление сервисом сурикаты
+- name: Services Suricata
+  hosts: servers
+  gather_facts: false
+
+  tasks:
+    - name: Stopped service suricata
+      ansible.builtin.systemd:
+        state: stopped
+        name: suricata
