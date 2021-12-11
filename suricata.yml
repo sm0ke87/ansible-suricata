@@ -1,5 +1,5 @@
 ---
-# Деплой 
+
 - name: Install Suricata
   hosts: servers
   gather_facts: false
