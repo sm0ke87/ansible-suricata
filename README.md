@@ -1,5 +1,5 @@
 # ansible-suricata
-<img alt="AUR license" src="https://img.shields.io/aur/license/Apache%202"> <img alt="suricata" src="https://img.shields.io/amo/v/6.0.4?label=suricata">
+<img alt="suricata" src="https://img.shields.io/badge/suricata-6.0.4-red"> <img alt="GitHub last commit (branch)" src="https://img.shields.io/github/last-commit/sm0ke87/ansible-suricata/master">
 
 ## Basic setup IDS ##
 
