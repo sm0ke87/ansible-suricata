@@ -1,0 +1,4 @@
+IFACE: vlan999
+proxy_env:
+      http_proxy: http://proxy:3128
+      https_proxy: http://proxy:3128

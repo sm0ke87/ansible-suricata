@@ -5,35 +5,47 @@
   gather_facts: false #пока не понятно нужен ли данный параметр
 
   vars:
-    IFACE: vlan492 #
+    IFACE: vlan492
     proxy_env:
-      http_proxy: http://proxy:3128 
+      http_proxy: http://proxy:3128
       https_proxy: http://proxy:3128
+
   tasks:
+    - name: Add suricata stable repository from PPA and install its signing key on Ubuntu target
+      ansible.builtin.apt_repository:
+        repo: ppa:oisf/suricata-stable
+
     - name: Install required packages
-    package: 
-      name: "{{ item }}"
-      state: installed
-    with_item:
-      - suricata
-    environment: "{{ proxy_env }}"      
+      apt:
+        name: suricata
+        state: latest
+      #environment: "{{ proxy_env }}"
       
-    - name: Copy default conf
-      template: src=etc/default/suricata.j2 dest=etc/default/suricata
-        owner: root
-        group: root
-        mode: 0660
-        backup: yes
+    - name: Change /etc/default/suricata
+      lineinfile:
+        dest: /etc/default/suricata
+        regexp: IFACE
+        line: IFACE={{ IFACE }}
   
     - name: Copy suricata conf
-      template: src=etc/suricata/suricata.yaml.j2 dest=etc/suricata/suricata.yaml
+      copy:
+        src: etc/suricata/suricata.yaml.j2
+        dest: /etc/suricata/suricata.yaml
         owner: root
         group: root
         mode: 0644
         backup: yes
 
+    - name: Change /etc/suricata/suricata.yaml #here now
+        lineinfile:
+          dest: /etc/default/suricata
+          regexp: IFACE
+          line: IFACE={{ IFACE }}
+
     - name: Logrotate.d conf
-      template: src=etc/logrotate.d/suricata.j2 dest=etc/logrotate.d/suricata
+      template:
+        src: etc/logrotate.d/suricata.j2
+        dest: etc/logrotate.d/suricata
         owner: root
         group: root
         mode: 0640
