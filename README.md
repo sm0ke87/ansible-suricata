@@ -7,9 +7,9 @@ Playbook was created for get knowledge in ansible
 
 ### What we are have? ###
 
-suricata.yml is playbook for install and configure suricata for IDS mode (check it out https://suricata.readthedocs.io/en/suricata-6.0.4/quickstart.html#basic-setup)
+* suricata.yml is playbook for install and configure suricata for IDS mode ([check it out ](https://suricata.readthedocs.io/en/suricata-6.0.4/quickstart.html#basic-setup "suricata docs"))
 
-suricata_stop.yml will stop service if it needs
+* suricata_stop.yml will stop service if it needs
 
 ### Launch ###
 
