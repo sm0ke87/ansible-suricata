@@ -3,11 +3,11 @@
 
 ## Basic setup IDS ##
 
-Playbook was created for get knowledge in ansible
+Playbook for basic setup IDS to your host
 
-### What we are have? ###
+### What we have? ###
 
-* suricata.yml is playbook for install and configure suricata for IDS mode ([check it out ](https://suricata.readthedocs.io/en/suricata-6.0.4/quickstart.html#basic-setup "suricata docs"))
+* suricata.yml is playbook for install and configure suricata in IDS mode ([check it out ](https://suricata.readthedocs.io/en/suricata-6.0.4/quickstart.html#basic-setup "suricata docs"))
 
 * suricata_stop.yml will stop service if it needs
 
